@@ -17,10 +17,10 @@ class DB
         do {
             //Datenbankverbindung aufbauen
             try {
-                $host = 'localhost';
-                $user = 'root';
-                $password = '';
-                $dbname = '1337chat';
+                $host = 'host.docker.internal';
+                $user = 'streamsite_manager';
+                $password = 'hda998M!';
+                $dbname = 'streamsite_manager';
 
                 // DSN Data Source Name für PDO
                 $dsn = "mysql:host=$host;dbname=$dbname;charset=utf8";
