@@ -1,0 +1,301 @@
+@font-face {
+  font-family: "MontserratExtraLight";
+  src: url('Montserrat-ExtraLight.ttf');
+}
+
+@font-face {
+  font-family: "MontserratMedium";
+  src: url('Montserrat-Medium.ttf');
+}
+
+@font-face {
+  font-family: "MontserratRegular";
+  src: url('Montserrat-Regular.ttf');
+}
+
+$red: #CC6555;
+$lightred: rgba(204, 101, 85, 0.18);
+$blue: #4175CC;
+$grey: #707070;
+
+html, body {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  vertical-align: center;
+  font-family: MontserratRegular, sans-serif;
+  font-size: 20px;
+  @supports (-webkit-touch-callout: none) {
+    font-size: 16px;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+a {
+  color: $blue;
+  text-decoration: none;
+  &:hover {
+
+  }
+}
+
+h1 {
+  font-family: MontserratRegular, sans-serif;
+  font-size: 2em;
+}
+
+.button {
+  $buttonHeight: 30px;
+  height: $buttonHeight;
+  padding: 0 2rem;
+  border: 1.5px solid $grey;
+  border-radius: calc($buttonHeight/2);
+  background-color: white;
+  font-size: .7rem;
+  line-height: $buttonHeight - 4px;
+  color: $grey;
+  cursor: pointer;
+  transition: background-color .1s;
+
+  &:hover {
+    background-color: $grey;
+    color: white;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    border-color: lightgrey;
+    color: white;
+    background: lightgrey;
+  }
+}
+
+.inputGroup {
+  $height: 50px;
+  width: 100%;
+  min-height: $height;
+  position: relative;
+
+  * {
+    border: none;
+    outline: none;
+  }
+
+  input {
+    width: 100%;
+
+
+    padding-left: calc($height / 2);
+
+    padding-right: $height+10px;
+    border: 1.5px solid $grey;
+    border-radius: calc($height / 2);
+    height: $height;
+
+    color: $grey;
+    font-size: 1rem;
+
+
+    &:focus {
+      outline: none;
+    }
+
+    &::placeholder {
+      color: darkgrey;
+
+    }
+
+  }
+
+  button {
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: block;
+    background: $blue;
+    color: white;
+    height: $height;
+    width: $height;
+    cursor: pointer;
+
+    border-radius: calc($height / 2);
+    font-size: 1rem;
+    text-align: center;
+
+    &::after {
+      content: "▶";
+      height: $height;
+      width: $height;
+      margin-left: 3px;
+      @supports (-webkit-touch-callout: none) {
+        margin-left: -2px;
+      }
+    }
+
+  }
+}
+
+#usernamePopup {
+  visibility: hidden;
+  height: 100%;
+  width: 100%;
+  position: fixed;
+
+  display: flex;
+  justify-content: center;
+
+  background: white;
+  z-index: 99;
+
+  color: $grey;
+
+  #usernameInput {
+    margin: 4rem 0 2rem 0;
+
+  }
+
+  .innerWrapper {
+    width: 450px;
+    padding: 1em;
+    text-align: center;
+    @media (max-width: 500px) {
+      width: 100%;
+    }
+  }
+
+  .errorMessage {
+    opacity: 0;
+    transition: opacity .5s;
+    margin: 1em 0;
+    padding: 1em;
+    border: 1px solid red;
+    border-radius: 10px;
+    background: #ffa5a5;
+  }
+
+}
+
+#chatWrapper {
+  width: 100%;
+  padding: .5em;
+  display: flex;
+  flex-direction: column;
+
+  #chatInnerWrapper {
+    height: 100%;
+    overflow: auto;
+    padding: .5em 0;
+    flex-wrap: wrap;
+
+
+
+    .chatMessage {
+
+      position: relative;
+      display: flex;
+      flex-wrap: wrap;
+      margin-bottom: 1em;
+      padding: .5em .5em;
+      border-radius: 20px;
+
+
+      &:hover {
+        .moderatorView {
+          //height: 40px !important;
+        }
+      }
+
+      &.self {
+
+      }
+
+      &.queued {
+        background: $lightred;
+
+        .approvedIdentifier::after {
+          content: "wartet";
+        }
+      }
+
+      &.deleted {
+        .chatText {
+          color: $red;
+        }
+      }
+
+      .userBubble {
+
+        &::after {
+          display: block;
+          content: attr(data-username);
+          text-align: center;
+          height: 40px;
+          font-size: .9rem;
+          font-family: MontserratRegular, sans-serif;
+          line-height: 40px;
+
+        }
+
+        flex-grow: 0;
+        flex-shrink: 0;
+        flex-basis: 40px;
+        max-width: 40px;
+        max-height: 40px;
+        border-radius: 25px;
+        margin-right: 10px;
+
+
+
+      }
+
+      .chatMessageBody {
+        flex: 0 0 90%;
+
+        @media (max-width: 600px) {
+          flex: 0 0 80%;
+        }
+
+        display: flex;
+        flex-wrap: wrap;
+        column-gap: 10px;
+
+        .chatUser {
+          font-family: MontserratMedium, sans-serif;
+        }
+
+        .chatTimestamp {
+          font-family: MontserratExtraLight, sans-serif;
+        }
+
+        .approvedIdentifier {
+          font-family: MontserratRegular, sans-serif;
+          color: $red;
+        }
+
+        .chatText {
+          flex-basis: 100%;
+        }
+
+        .moderatorView {
+          display: flex;
+          height: 50px;
+          transition: height .1s ease-in-out;
+          overflow: hidden;
+          margin-top: 1em;
+          flex: 0 1 100%;
+          width: 100%;
+          column-gap: .5rem;
+        }
+      }
+    }
+  }
+}
+
+

@@ -1,0 +1,179 @@
+html, body {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  vertical-align: center;
+  font-family: "Lato", sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.button {
+  background: #5E82C5;
+  padding: 1em;
+  color: white;
+  border: none;
+  outline: none;
+  transition: background-color 0.1s;
+}
+.button:hover {
+  background: #84A3DC;
+  cursor: pointer;
+}
+.button:active {
+  background: lightgrey;
+  color: #353535;
+}
+
+.inputGroup {
+  display: flex;
+  width: 100%;
+  min-height: 40px;
+}
+.inputGroup * {
+  border: none;
+  outline: none;
+}
+.inputGroup input {
+  width: 70%;
+  padding: 0.75em;
+  background: white;
+  color: black;
+}
+.inputGroup input:focus {
+  outline: none;
+}
+.inputGroup input::placeholder {
+  color: darkgrey;
+}
+.inputGroup button {
+  width: 30%;
+}
+
+#usernamePopup {
+  visibility: hidden;
+  height: 100%;
+  width: 100%;
+  position: fixed;
+  display: flex;
+  justify-content: center;
+  background: #B5CAF0;
+  z-index: 99;
+}
+#usernamePopup .innerWrapper {
+  width: 450px;
+  padding: 1em;
+  text-align: center;
+}
+@media (max-width: 500px) {
+  #usernamePopup .innerWrapper {
+    width: 100%;
+  }
+}
+#usernamePopup .errorMessage {
+  opacity: 0;
+  transition: opacity 0.5s;
+  margin: 1em 0;
+  padding: 1em;
+  border: 1px solid red;
+  border-radius: 10px;
+  background: #ffa5a5;
+}
+
+#chatWrapper {
+  width: 100%;
+  padding: 1em;
+  display: flex;
+  flex-direction: column;
+}
+#chatWrapper h1 {
+  font-size: 1.5em;
+}
+#chatWrapper #chatInnerWrapper {
+  height: 100%;
+  overflow: auto;
+  padding: 0.5em 0;
+}
+#chatWrapper #chatInnerWrapper .chatMessage {
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 0em;
+}
+#chatWrapper #chatInnerWrapper .chatMessage.self {
+  background: #f5f5f5;
+}
+#chatWrapper #chatInnerWrapper .chatMessage.queued {
+  background: #ffe5c4;
+}
+#chatWrapper #chatInnerWrapper .chatMessage .chatMessageHeader {
+  display: flex;
+  justify-content: normal;
+  gap: 0.5em;
+  width: 100%;
+}
+#chatWrapper #chatInnerWrapper .chatMessage .chatMessageHeader .chatUser {
+  font-weight: bold;
+}
+#chatWrapper #chatInnerWrapper .chatMessage .chatMessageBody {
+  width: 100%;
+}
+#chatWrapper #chatInnerWrapper .chatMessage .chatMessageFooter {
+  font-size: 0.75em;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  gap: 1em;
+}
+#chatWrapper #chatInnerWrapper .chatMessage .chatMessageFooter a {
+  cursor: pointer;
+  align-self: flex-end;
+  text-align: right;
+  text-decoration: underline;
+}
+#chatWrapper #chatInnerWrapper .queued .approvedIdentifier {
+  color: orange;
+}
+#chatWrapper #chatInnerWrapper .queued .approvedIdentifier::after {
+  content: "wartet";
+}
+#chatWrapper #chatInnerWrapper .approved .approvedIdentifier {
+  color: lightgreen;
+  font-style: normal;
+}
+#chatWrapper #chatInnerWrapper .deleted {
+  color: grey;
+  background: lightgrey;
+}
+#chatWrapper #chatFooterWrapper {
+  display: flex;
+  width: 100%;
+  min-height: 50px;
+}
+#chatWrapper #chatFooterWrapper input {
+  width: 70%;
+  padding: 0.75em;
+  background: #a9a9a945;
+  color: black;
+}
+#chatWrapper #chatFooterWrapper input:focus {
+  outline: none;
+}
+#chatWrapper #chatFooterWrapper input::placeholder {
+  color: darkgrey;
+}
+#chatWrapper #chatFooterWrapper button {
+  width: 30%;
+}
+#chatWrapper #chatFooterWrapper * {
+  border: none;
+  outline: none;
+}
+
+/*# sourceMappingURL=style_fallbak.css.map */

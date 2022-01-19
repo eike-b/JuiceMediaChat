@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chat</title>
+
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+
+    <script type="text/javascript" src="chat.js"></script>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+
+
+    <div id="usernamePopup" data-visible="false">
+        <div class="innerWrapper">
+            <h1>Willkommen im Chat!</h1>
+            <p>Sie können nachfolgend einen Namen eingeben oder anonym chatten.</p>
+
+            <div class="inputGroup">
+                <input placeholder="Name" type="text" name="username">
+                <button class="button" id="enterWithUsername">Beitreten</button>
+            </div>
+            <p>oder</p>
+            <button class="button" id="enterAnonymous">Anonym beitreten</button>
+            <div class="errorMessage">Unser Chat ist zur Zeit offline. Bitte versuchen Sie es später erneut.</div>
+        </div>
+
+    </div>
+
+
+    <div id="chatWrapper">
+        <h1>1337 Chat </h1>
+        <div id="chatInnerWrapper">
+            <!--
+            <div class="chatMessage self">
+                <div class="chatMessageHeader">
+                    <div class="chatUser">Eike</div>
+                    <div class="chatTimestamp">13:37 Uhr</div>
+                    <div class="approvedIdentifier">wartet</div>
+                </div>
+
+                <div class="chatMessageBody">Hi, ich bin eine Nachricht und ich bin toll.</div>
+            </div>
+
+            <div class="chatMessage">
+                <div class="chatMessageHeader">
+                    <div class="chatUser">Leon</div>
+                    <div class="chatTimestamp">47:11 Uhr</div>
+                </div>
+
+                <div class="chatMessageBody">Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.</div>
+            </div>
+        -->
+        </div>
+
+
+        <div id="chatFooterWrapper">
+            <input id="chatInput" placeholder="Ihre Nachricht.." type="text" name="msg">
+            <button class="button" id="sendMessage">Nachricht senden</button>
+        </div>
+
+        <br/>
+    </div>
+
+</body>
+</html>

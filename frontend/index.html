@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chat</title>
+
+    <link rel="stylesheet" href="style.css">
+    <script type="text/javascript" src="chat.js"></script>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+</head>
+<body>
+
+
+    <div id="usernamePopup" data-visible="false">
+        <div class="innerWrapper">
+            <h1>Willkommen im Chat!</h1>
+            <p>Sie können nachfolgend einen Namen eingeben oder anonym chatten.</p>
+
+            <div class="inputGroup" id="usernameInput">
+                <label>
+                    <input placeholder="Name" type="text" name="username" autocomplete="off">
+                </label>
+                <button id="enterWithUsername"></button>
+            </div>
+
+            <a href="" title="Ihr Benutzername wird zufällig generiert." id="enterAnonymous">Anonym beitreten</a>
+            <div class="errorMessage">Unser Chat ist zur Zeit offline. Bitte versuchen Sie es später erneut.</div>
+        </div>
+
+    </div>
+
+
+    <div id="chatWrapper">
+        <div id="chatInnerWrapper" onclick="void(0)">
+            <!--
+            <div class="chatMessage moderator" onclick="void(0)">
+                <div class="userBubble" data-username="E" style="background: rgb(99, 143, 218);"></div>
+                <div class="chatMessageBody">
+                    <div class="chatUser">Eike</div>
+                    <div class="chatTimestamp">13:37 Uhr</div>
+
+                    <div class="chatText">Hi, ich bin eine Nachricht und ich bin toll.</div>
+                    <div class="moderatorView">
+                        <button class="button" disabled>Löschen</button>
+                        <button class="button">Freigeben</button>
+                        <button class="button">Push</button>
+                        <button class="button">User blockieren</button>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="chatMessage moderator queued" onclick="void(0)">
+                <div class="userBubble" data-username="LM" style="background: rgb(99, 143, 218);"></div>
+                <div class="chatMessageBody">
+                    <div class="chatUser">Leon Moreno</div>
+                    <div class="chatTimestamp">13:37 Uhr</div>
+
+                    <div class="approvedIdentifier"></div>
+                    <div class="chatText">Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. A</div>
+                    <div class="moderatorView">
+                        <button class="button">Löschen</button>
+                        <button class="button">Freigeben</button>
+                        <button class="button">Push</button>
+                        <button class="button">User blockieren</button>
+                    </div>
+                </div>
+
+            </div>
+        -->
+        </div>
+
+
+        <div id="chatFooterWrapper">
+
+            <div class="inputGroup">
+                <label for="chatInput"></label>
+                <input id="chatInput" placeholder="Ihre Nachricht.." type="text" name="msg" autofocus>
+                <button id="sendMessage"></button>
+            </div>
+
+
+        </div>
+
+        <br/>
+    </div>
+
+</body>
+</html>

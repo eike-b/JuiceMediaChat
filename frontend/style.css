@@ -1,0 +1,235 @@
+@charset "UTF-8";
+@font-face {
+  font-family: "MontserratExtraLight";
+  src: url("Montserrat-ExtraLight.ttf");
+}
+@font-face {
+  font-family: "MontserratMedium";
+  src: url("Montserrat-Medium.ttf");
+}
+@font-face {
+  font-family: "MontserratRegular";
+  src: url("Montserrat-Regular.ttf");
+}
+html, body {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  vertical-align: center;
+  font-family: MontserratRegular, sans-serif;
+  font-size: 20px;
+}
+@supports (-webkit-touch-callout: none) {
+  html, body {
+    font-size: 16px;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+a {
+  color: #4175CC;
+  text-decoration: none;
+}
+h1 {
+  font-family: MontserratRegular, sans-serif;
+  font-size: 2em;
+}
+
+.button {
+  height: 30px;
+  padding: 0 2rem;
+  border: 1.5px solid #707070;
+  border-radius: 15px;
+  background-color: white;
+  font-size: 0.7rem;
+  line-height: 26px;
+  color: #707070;
+  cursor: pointer;
+  transition: background-color 0.1s;
+}
+.button:hover {
+  background-color: #707070;
+  color: white;
+}
+.button:disabled {
+  cursor: not-allowed;
+  border-color: lightgrey;
+  color: white;
+  background: lightgrey;
+}
+
+.inputGroup {
+  width: 100%;
+  min-height: 50px;
+  position: relative;
+}
+.inputGroup * {
+  border: none;
+  outline: none;
+}
+.inputGroup input {
+  width: 100%;
+  padding-left: 25px;
+  padding-right: 60px;
+  border: 1.5px solid #707070;
+  border-radius: 25px;
+  height: 50px;
+  color: #707070;
+  font-size: 1rem;
+}
+.inputGroup input:focus {
+  outline: none;
+}
+.inputGroup input::placeholder {
+  color: darkgrey;
+}
+.inputGroup button {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: block;
+  background: #4175CC;
+  color: white;
+  height: 50px;
+  width: 50px;
+  cursor: pointer;
+  border-radius: 25px;
+  font-size: 1rem;
+  text-align: center;
+}
+.inputGroup button::after {
+  content: "▶";
+  height: 50px;
+  width: 50px;
+  margin-left: 3px;
+}
+@supports (-webkit-touch-callout: none) {
+  .inputGroup button::after {
+    margin-left: -2px;
+  }
+}
+
+#usernamePopup {
+  visibility: hidden;
+  height: 100%;
+  width: 100%;
+  position: fixed;
+  display: flex;
+  justify-content: center;
+  background: white;
+  z-index: 99;
+  color: #707070;
+}
+#usernamePopup #usernameInput {
+  margin: 4rem 0 2rem 0;
+}
+#usernamePopup .innerWrapper {
+  width: 450px;
+  padding: 1em;
+  text-align: center;
+}
+@media (max-width: 500px) {
+  #usernamePopup .innerWrapper {
+    width: 100%;
+  }
+}
+#usernamePopup .errorMessage {
+  opacity: 0;
+  transition: opacity 0.5s;
+  margin: 1em 0;
+  padding: 1em;
+  border: 1px solid red;
+  border-radius: 10px;
+  background: #ffa5a5;
+}
+
+#chatWrapper {
+  width: 100%;
+  padding: 0.5em;
+  display: flex;
+  flex-direction: column;
+}
+#chatWrapper #chatInnerWrapper {
+  height: 100%;
+  overflow: auto;
+  padding: 0.5em 0;
+  flex-wrap: wrap;
+}
+#chatWrapper #chatInnerWrapper .chatMessage {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 1em;
+  padding: 0.5em 0.5em;
+  border-radius: 20px;
+}
+#chatWrapper #chatInnerWrapper .chatMessage.queued {
+  background: rgba(204, 101, 85, 0.18);
+}
+#chatWrapper #chatInnerWrapper .chatMessage.queued .approvedIdentifier::after {
+  content: "wartet";
+}
+#chatWrapper #chatInnerWrapper .chatMessage.deleted .chatText {
+  color: #CC6555;
+}
+#chatWrapper #chatInnerWrapper .chatMessage .userBubble {
+  flex-grow: 0;
+  flex-shrink: 0;
+  flex-basis: 40px;
+  max-width: 40px;
+  max-height: 40px;
+  border-radius: 25px;
+  margin-right: 10px;
+}
+#chatWrapper #chatInnerWrapper .chatMessage .userBubble::after {
+  display: block;
+  content: attr(data-username);
+  text-align: center;
+  height: 40px;
+  font-size: 0.9rem;
+  font-family: MontserratRegular, sans-serif;
+  line-height: 40px;
+}
+#chatWrapper #chatInnerWrapper .chatMessage .chatMessageBody {
+  flex: 0 0 90%;
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 10px;
+}
+@media (max-width: 600px) {
+  #chatWrapper #chatInnerWrapper .chatMessage .chatMessageBody {
+    flex: 0 0 80%;
+  }
+}
+#chatWrapper #chatInnerWrapper .chatMessage .chatMessageBody .chatUser {
+  font-family: MontserratMedium, sans-serif;
+}
+#chatWrapper #chatInnerWrapper .chatMessage .chatMessageBody .chatTimestamp {
+  font-family: MontserratExtraLight, sans-serif;
+}
+#chatWrapper #chatInnerWrapper .chatMessage .chatMessageBody .approvedIdentifier {
+  font-family: MontserratRegular, sans-serif;
+  color: #CC6555;
+}
+#chatWrapper #chatInnerWrapper .chatMessage .chatMessageBody .chatText {
+  flex-basis: 100%;
+}
+#chatWrapper #chatInnerWrapper .chatMessage .chatMessageBody .moderatorView {
+  display: flex;
+  height: 50px;
+  transition: height 0.1s ease-in-out;
+  overflow: hidden;
+  margin-top: 1em;
+  flex: 0 1 100%;
+  width: 100%;
+  column-gap: 0.5rem;
+}
+
+/*# sourceMappingURL=style.css.map */
