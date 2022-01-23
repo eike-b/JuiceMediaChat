@@ -110,9 +110,10 @@ function enterWithUsername() {
 }
 
 function enterAnonymous() {
-    let anonymous = ["Fuchs", "Wolf", "Löwe", "Otter", "Tiger", "Seebär", "Fisch", "Luchs", "Panther"];
-    window.username = "Anonymer " + anonymous[Math.floor(Math.random() * anonymous.length)];
-    window.sessionStorage.setItem("username", username);
+    //let anonymous = ["Fuchs", "Wolf", "Löwe", "Otter", "Tiger", "Seebär", "Fisch", "Luchs", "Panther"];
+    //window.username = "Anonymer " + anonymous[Math.floor(Math.random() * anonymous.length)];
+    window.username = "Anonym";
+    window.sessionStorage.setItem("username", window.username);
     establishConnection();
 }
 
@@ -170,8 +171,11 @@ function onMessage(e) {
                 // Wenn ein Moderator eine bereits approved Nachricht erhält
                 // Nachricht als approved markieren
                 if (jsonMessage.approved == 1) {
+                    chatMessage.classList.remove("queued");
                     chatMessage.classList.add("approved");
                     chatMessage.querySelector(".moderatorView button[data-function=approve]").setAttribute("disabled", "disabled");
+                } else {
+                    chatMessage.classList.add("queued");
                 }
 
                 // Wenn ein Moderator eine bereits gelöschte Nachricht erhält
