@@ -1,3 +1,5 @@
+@use 'sass:math';
+
 @font-face {
   font-family: "MontserratExtraLight";
   src: url('Montserrat-ExtraLight.ttf');
@@ -12,6 +14,8 @@
   font-family: "MontserratRegular";
   src: url('Montserrat-Regular.ttf');
 }
+
+
 
 $red: #CC6555;
 $lightred: rgba(204, 101, 85, 0.18);
@@ -56,7 +60,8 @@ h1 {
   height: $buttonHeight;
   padding: 0 2rem;
   border: 1.5px solid $grey;
-  border-radius: calc($buttonHeight/2);
+  border-radius: math.div($buttonHeight, 2);
+
   background-color: white;
   font-size: .7rem;
   line-height: $buttonHeight - 4px;
@@ -91,12 +96,11 @@ h1 {
   input {
     width: 100%;
 
-
-    padding-left: calc($height / 2);
+    padding-left: math.div($height, 2);
 
     padding-right: $height+10px;
     border: 1.5px solid $grey;
-    border-radius: calc($height / 2);
+    border-radius: math.div($height, 2);
     height: $height;
 
     color: $grey;
@@ -125,7 +129,7 @@ h1 {
     width: $height;
     cursor: pointer;
 
-    border-radius: calc($height / 2);
+    border-radius: math.div($height, 2);
     font-size: 1rem;
     text-align: center;
 
@@ -284,11 +288,12 @@ h1 {
         }
 
         .moderatorView {
+          //position: absolute;
           display: flex;
-          height: 50px;
+          height: auto;
           transition: height .1s ease-in-out;
           overflow: hidden;
-          margin-top: 1em;
+          margin-top: .5rem;
           flex: 0 1 100%;
           width: 100%;
           column-gap: .5rem;
