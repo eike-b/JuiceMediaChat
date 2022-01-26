@@ -29,11 +29,12 @@ class DB
         do {
             //Datenbankverbindung aufbauen
             try {
+
                 $host = $this->config['db_host'];
                 $user = $this->config['db_user'];
                 $password = $this->config['db_password'];
                 $dbname = $this->config['db_name'];
-
+                
                 // DSN Data Source Name für PDO
                 $dsn = "mysql:host=$host;dbname=$dbname;charset=utf8";
 
