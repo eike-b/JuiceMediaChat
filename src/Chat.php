@@ -8,24 +8,24 @@ use Ratchet\ConnectionInterface;
 
 class Chat implements MessageComponentInterface {
 
-    protected bool $moderation;
     protected array $messageQueue;
     protected array $_user;
     protected array $_blockedUser;
+    protected array $_settings;
 
     public function __construct()
     {
         echo "starte...".PHP_EOL;
         $this->syncQueueWithDatabase();
-
-        $this->moderation = true;
+        $this->syncSettings();
         $this->_user = [];
         $this->_blockedUser = [];
         echo "...fertig!".PHP_EOL;
     }
 
-    private function syncQueueWithDatabase(): bool
+    private function syncQueueWithDatabase()
     {
+        echo "lese Nachrichten aus Datenbank..".PHP_EOL;
         //TODO nur Nachrichten vom aktuellen Tag laden
         if (DB::getInstance()->query("SELECT * FROM messages WHERE approved = :approved", ["approved" => 0])) {
             if(!empty(DB::getInstance()->results()))
@@ -35,13 +35,39 @@ class Chat implements MessageComponentInterface {
                     $this->messageQueue[] = array_merge(["command" => "chatMsg"], $msg);
                 }
                 echo "Ich habe " . count($this->messageQueue) . " Nachrichten aus der Datenbank geladen.".PHP_EOL;
-                return true;
+            }
+            else {
+                $this->messageQueue = [];
+                echo "Ich habe 0 Nachrichten aus der Datenbank geladen.".PHP_EOL;
             }
 
+        } else {
+            $this->messageQueue = [];
+            echo "Fehler beim lesen der Nachrichten aus der Datenbank.".PHP_EOL;
         }
-        $this->messageQueue = [];
-        echo "Ich habe 0 Nachrichten aus der Datenbank geladen.".PHP_EOL;
-        return true;
+
+    }
+
+    private function syncSettings() {
+        echo "lese Einstellungen aus Datenbank..".PHP_EOL;
+        if (DB::getInstance()->query("SELECT * FROM chat_settings")) {
+            $results = DB::getInstance()->results();
+            if(!empty($results))
+            {
+                unset($this->_settings);
+                $this->_settings['welcome_message'] = $results[0]['welcome_message'];
+                $this->_settings['moderation'] = $results[0]['moderation'];
+                echo "Ich habe die Einstellungen mit der Datenbank synchronisiert.".PHP_EOL;
+            }
+
+        } else {
+            $config = include('../config.php');
+            $this->_settings['welcome_message'] = $config['welcome_message_default'];
+            $this->_settings['moderation'] = $config['moderation'];
+            echo "Fehler beim synchronisieren der Einstellungen. Defaults wurden geladen.".PHP_EOL;
+        }
+
+
     }
 
     /**
@@ -224,14 +250,14 @@ class Chat implements MessageComponentInterface {
             // jedem neuen client aktuelle config mitgeben
             $this->sendTo($id, json_encode([
                 "command" => "settings",
-                "moderation" => $this->moderation,
+                "moderation" => $this->_settings['moderation'],
                 "userId" => $id,
                 "userIsModerator" => $this->userIsModerator($id),
                 "userIsSpeaker" => $this->userIsSpeaker($id),
             ]));
 
 
-            if($this->moderation) {
+            if($this->_settings['moderation']) {
                 // jedem neuen Moderator alle Nachrichten in Warteschlange schicken
                 if($this->userIsModerator($id)) {
 
@@ -252,7 +278,7 @@ class Chat implements MessageComponentInterface {
                         "username" => "Moderator",
                         "approved" => true,
                         "timestamp" => time(),
-                        "message" => "Moin!\nUnser Chat wird derzeit moderiert, Deine Nachrichten werden durch einen Moderator freigegeben.\nFrohes chatten!"
+                        "message" => $this->_settings['welcome_message']
                     ]));
                 }
 
@@ -300,7 +326,7 @@ class Chat implements MessageComponentInterface {
 
 
                 // wenn der chat auf moderiert eingestellt ist
-                if($this->moderation) {
+                if($this->_settings['moderation']) {
 
 
                     if(!$user['isModerator']) {
@@ -414,6 +440,7 @@ class Chat implements MessageComponentInterface {
 
             // settings umstellen
             case 'settings':
+                $this->syncSettings();
                 echo "settings".PHP_EOL;
                 break;
         }

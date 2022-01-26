@@ -223,10 +223,10 @@ h1 {
 }
 #chatWrapper #chatInnerWrapper .chatMessage .chatMessageBody .moderatorView {
   display: flex;
-  height: 50px;
+  height: auto;
   transition: height 0.1s ease-in-out;
   overflow: hidden;
-  margin-top: 1em;
+  margin-top: 0.5rem;
   flex: 0 1 100%;
   width: 100%;
   column-gap: 0.5rem;

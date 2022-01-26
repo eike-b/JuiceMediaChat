@@ -7,21 +7,34 @@ use PDO;
 class DB
 {
     private static object|null $instance = null;
+    private array $config = [];
     private $pdo,
         $query,
         $error = false,
         $results,
         $count = 0;
 
+
     private function __construct() {
+        try{
+            $this->config = include('../config.php');
+        } catch (\Exception $exception) {
+            echo "Kann die Konfigurationsdatei nicht einlesen. Gibt's die? Haste Rechte? So wird das nix, ich brech ab.".PHP_EOL;
+            die();
+        }
+        $this->connect();
+    }
+
+    private function connect() {
         do {
             //Datenbankverbindung aufbauen
             try {
-                $host = 'host.docker.internal';
-                $user = 'streamsite_manager';
-                $password = '87U%qj9c';
-                $dbname = 'streamsite_manager';
 
+                $host = $this->config['db_host'];
+                $user = $this->config['db_user'];
+                $password = $this->config['db_password'];
+                $dbname = $this->config['db_name'];
+                
                 // DSN Data Source Name für PDO
                 $dsn = "mysql:host=$host;dbname=$dbname;charset=utf8";
 
@@ -30,17 +43,22 @@ class DB
                 $this->pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
                 //$this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
                 $this->error = false;
+                echo "Datenbankverbindung (wieder)hergestellt!".PHP_EOL;
             }
             catch(\PDOException $e) {
                 echo "Datenbankfehler: " . $e->getMessage() . PHP_EOL;
+                echo "Neuer Versuch in 5 sek.".PHP_EOL;
                 $this->error = true;
+                sleep(5);
             }
-            sleep(1);
         } while($this->error);
-
     }
 
-    public static function getInstance(): DB|null
+    /**
+     * Gibt die aktuelle Instanz zurück oder erstellt eine neue (und gibt diese zurück).
+     * @return DB
+     */
+    public static function getInstance(): DB
     {
         if(!isset(self::$instance)) {
             self::$instance = new DB();
@@ -67,31 +85,48 @@ class DB
     {
         $this->error = false;
         $this->results = [];
+        $tempError = false;
 
-        if($this->query = $this->pdo->prepare($sql)) {
-            if(count($params)) {
+        do {
+            try {
+                if ($this->query = $this->pdo->prepare($sql)) {
+                    if (count($params)) {
 
-                foreach($params as $param => $value) {
-                    //um zwischen den verschiedenen datentypen zu entscheiden, sonst wird alles als string gebinded, das gibt zb. bei LIMIT fehler
-                    switch (gettype($value)) {
-                        case "integer":
-                            $this->query->bindValue($param, $value, PDO::PARAM_INT);
-                            break;
-                        default:
-                            $this->query->bindValue($param, $value);
+                        foreach ($params as $param => $value) {
+                            //um zwischen den verschiedenen datentypen zu entscheiden, sonst wird alles als string gebinded, das gibt zb. bei LIMIT fehler
+                            switch (gettype($value)) {
+                                case "integer":
+                                    $this->query->bindValue($param, $value, PDO::PARAM_INT);
+                                    break;
+                                default:
+                                    $this->query->bindValue($param, $value);
+                            }
+                        }
+                    }
+
+                    if ($this->query->execute()) {
+                        $this->count = $this->query->rowCount();
+                        $this->results = $this->query->fetchAll();
+                    } else {
+                        $this->error = $this->query->errorInfo();
+                        echo "Datenbankfehler: " . $this->query->errorCode() . " " . $this->query->errorInfo()[2];
+                    }
+                    $tempError = false;
+                }
+            } catch(\PDOException $exception) {
+
+                if(isset($exception->errorInfo[1])) {
+                    if($exception->errorInfo[1] === 2006) {
+                        echo "MySQL Server hat uns die Verbindung gekappt. Baue neue Verbindung auf..".PHP_EOL;
+                        $tempError = true;
+                        $this->connect();
+                    }
+                    else {
+                        echo $exception->getMessage().PHP_EOL;
                     }
                 }
             }
-
-            if($this->query->execute()) {
-                $this->count = $this->query->rowCount();
-                $this->results = $this->query->fetchAll();
-            }
-            else {
-                $this->error = $this->query->errorInfo();
-                echo "Datenbankfehler: " . $this->query->errorCode() . " " . $this->query->errorInfo()[2];
-            }
-        }
+        } while($tempError);
         return $this;
     }
 

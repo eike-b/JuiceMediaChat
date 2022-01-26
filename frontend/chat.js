@@ -47,7 +47,7 @@ function establishConnection() {
     }
 
     let p = setConnectionParams();
-    conn = new WebSocket('ws://192.168.178.137:1337?' + p);
+    conn = new WebSocket('ws://localhost:1337?' + p);
     conn.onerror = function (e){
         usernamePopup("error");
         console.error("websocket kapoot");
@@ -110,9 +110,10 @@ function enterWithUsername() {
 }
 
 function enterAnonymous() {
-    let anonymous = ["Fuchs", "Wolf", "Löwe", "Otter", "Tiger", "Seebär", "Fisch", "Luchs", "Panther"];
-    window.username = "Anonymer " + anonymous[Math.floor(Math.random() * anonymous.length)];
-    window.sessionStorage.setItem("username", username);
+    //let anonymous = ["Fuchs", "Wolf", "Löwe", "Otter", "Tiger", "Seebär", "Fisch", "Luchs", "Panther"];
+    //window.username = "Anonymer " + anonymous[Math.floor(Math.random() * anonymous.length)];
+    window.username = "Anonym";
+    window.sessionStorage.setItem("username", window.username);
     establishConnection();
 }
 
@@ -168,18 +169,23 @@ function onMessage(e) {
 
             if(moderator) {
                 // Wenn ein Moderator eine bereits approved Nachricht erhält
-                // Nachricht als gelöscht markieren
+                // Nachricht als approved markieren
                 if (jsonMessage.approved == 1) {
+                    chatMessage.classList.remove("queued");
                     chatMessage.classList.add("approved");
                     chatMessage.querySelector(".moderatorView button[data-function=approve]").setAttribute("disabled", "disabled");
+                } else {
+                    chatMessage.classList.add("queued");
                 }
 
                 // Wenn ein Moderator eine bereits gelöschte Nachricht erhält
-                // Nachricht als gelöscht markieren
+                // Nachricht als gelöscht markieren + freigeben und pushen deaktivieren
                 if (jsonMessage.deleted == 1) {
                     chatMessage.classList.add("deleted");
                     chatMessage.querySelector(".chatText").innerHTML = "Diese Nachricht wurde gelöscht";
                     chatMessage.querySelector(".moderatorView button[data-function=delete]").setAttribute("disabled", "disabled");
+                    chatMessage.querySelector(".moderatorView button[data-function=approve]").setAttribute("disabled", "disabled");
+                    chatMessage.querySelector(".moderatorView button[data-function=push]").setAttribute("disabled", "disabled");
                 }
 
                 // Wenn ein Moderator eine bereits pushed Nachricht erhält
@@ -221,6 +227,8 @@ function onMessage(e) {
 
                     if(moderator) {
                         chatMessages[i].querySelector(".moderatorView button[data-function=delete]").setAttribute("disabled", "disabled");
+                        chatMessages[i].querySelector(".moderatorView button[data-function=approve]").setAttribute("disabled", "disabled");
+                        chatMessages[i].querySelector(".moderatorView button[data-function=push]").setAttribute("disabled", "disabled");
                     }
                 }
             }
@@ -244,7 +252,7 @@ function onMessage(e) {
             moderator = Boolean(jsonMessage.userIsModerator);
             userId = jsonMessage.userId;
             if(moderator) {
-                window.username += " (Moderator)";
+                window.username = "Moderator";
             }
             break;
     }
