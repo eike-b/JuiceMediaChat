@@ -17,7 +17,7 @@ class DB
 
     private function __construct() {
         try{
-            $this->config = include('../config.php');
+            $this->config = include('..'.DIRECTORY_SEPARATOR.'config.php');
         } catch (\Exception $exception) {
             echo "Kann die Konfigurationsdatei nicht einlesen. Gibt's die? Haste Rechte? So wird das nix, ich brech ab.".PHP_EOL;
             die();
