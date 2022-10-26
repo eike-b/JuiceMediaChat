@@ -217,6 +217,14 @@ class Chat implements MessageComponentInterface {
         $this->messageQueue[] = $msg;
     }
 
+    private function getMessageHistory(): array|false {
+        $db = DB::getInstance()->query("SELECT * FROM `messages` WHERE `deleted` = 0 LIMIT 25");
+        if(!$db->isError()) {
+            return $db->results();
+        }
+        return false;
+    }
+
     function onOpen(ConnectionInterface $conn)
     {
 
@@ -261,15 +269,31 @@ class Chat implements MessageComponentInterface {
                 // jedem neuen Moderator alle Nachrichten in Warteschlange schicken
                 if($this->userIsModerator($id)) {
 
-                    // Einmal alle Nachrichten in der Queue mit der Datenbank abgleichen
-                    $this->syncQueueWithDatabase();
+                    // Wenn die Nachrichtenhistory fehlerfrei gelesen wird
+                    if($msgToMod = $this->getMessageHistory()) {
+                        $this->consoleEcho("Message History geladen");
+                    }
+                    // Ansonsten wird die message queue genutzt
+                    else {
+                        // Einmal alle Nachrichten in der Queue mit der Datenbank abgleichen
+                        $this->syncQueueWithDatabase();
+                        $msgToMod = $this->messageQueue;
+                        $this->consoleEcho("Fehler beim Laden der MessageHistroy aus der MySQL Datenbank. -> Lade stattdessen MessageQueue");
+                    }
 
-                    foreach ($this->messageQueue as $key => $queueMessage) {
-                        $conn->send(json_encode(array_merge(["command" => "chatMsg"], $queueMessage)));
+                    foreach ($msgToMod as $key => $msg) {
+                        $conn->send(json_encode(array_merge(["command" => "chatMsg"], $msg)));
                     }
                 }
                 elseif ($this->userIsSpeaker($id)) {
-                    //do nothing.
+                    // Einmal alle Nachrichten in der Queue mit der Datenbank abgleichen
+
+                    // Filtern und nur die Nachrichten mit "pushed" status an speaker schicken
+                    foreach ($this->getMessageHistory() as $key => $queueMessage) {
+                        if($queueMessage["pushed"] && !$queueMessage["done"]) {
+                            $conn->send(json_encode(array_merge(["command" => "chatMsg"], $queueMessage)));
+                        }
+                    }
                 }
                 else {
                     // jedem neuen User die "moderated" Nachricht schicken
@@ -437,6 +461,12 @@ class Chat implements MessageComponentInterface {
 
                 break;
 
+            case 'doneMsg':
+                // alle bekommen done command
+                $this->sendToAll(["mods", "speakers"], json_encode(["command" => "doneMsg", "uuid" => $message['uuid']]));
+                // Nachricht in der Datenbank als done markieren
+                DB::getInstance()->update("messages", ["done" => true,], ["uuid" => $message['uuid']]);
+                break;
 
             // settings umstellen
             case 'settings':
