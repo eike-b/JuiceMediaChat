@@ -47,7 +47,7 @@ function establishConnection() {
     }
 
     let p = setConnectionParams();
-    conn = new WebSocket('ws://localhost:1337?' + p);
+    conn = new WebSocket('ws://192.168.178.182:1337?' + p);
     conn.onerror = function (e){
         usernamePopup("error");
         console.error("websocket kapoot");
@@ -170,10 +170,12 @@ function onMessage(e) {
             if(moderator) {
                 // Wenn ein Moderator eine bereits approved Nachricht erhält
                 // Nachricht als approved markieren
+
                 if (jsonMessage.approved == 1) {
                     chatMessage.classList.remove("queued");
                     chatMessage.classList.add("approved");
                     chatMessage.querySelector(".moderatorView button[data-function=approve]").setAttribute("disabled", "disabled");
+                    chatMessage.querySelector(".moderatorView button[data-function=approve]").innerHTML = "freigegeben";
                 } else {
                     chatMessage.classList.add("queued");
                 }
@@ -181,11 +183,14 @@ function onMessage(e) {
                 // Wenn ein Moderator eine bereits gelöschte Nachricht erhält
                 // Nachricht als gelöscht markieren + freigeben und pushen deaktivieren
                 if (jsonMessage.deleted == 1) {
+
+
                     chatMessage.classList.add("deleted");
                     chatMessage.querySelector(".chatText").innerHTML = "Diese Nachricht wurde gelöscht";
                     chatMessage.querySelector(".moderatorView button[data-function=delete]").setAttribute("disabled", "disabled");
                     chatMessage.querySelector(".moderatorView button[data-function=approve]").setAttribute("disabled", "disabled");
                     chatMessage.querySelector(".moderatorView button[data-function=push]").setAttribute("disabled", "disabled");
+
                 }
 
                 // Wenn ein Moderator eine bereits pushed Nachricht erhält
@@ -193,6 +198,16 @@ function onMessage(e) {
                 if (jsonMessage.pushed == 1) {
                     chatMessage.classList.add("pushed");
                     chatMessage.querySelector(".moderatorView button[data-function=push]").setAttribute("disabled", "disabled");
+                    chatMessage.querySelector(".moderatorView button[data-function=done]").removeAttribute("disabled");
+                    chatMessage.querySelector(".moderatorView button[data-function=push]").innerHTML = "pushed";
+                }
+
+                // Wenn ein Moderator eine bereits done Nachricht erhält
+                // Nachricht als done markieren
+                if (jsonMessage.done == 1) {
+                    chatMessage.classList.add("pushed");
+                    chatMessage.querySelector(".moderatorView button[data-function=done]").setAttribute("disabled", "disabled");
+                    chatMessage.querySelector(".moderatorView button[data-function=done]").innerHTML = "done";
                 }
             }
             // Fremde Chat nachricht
@@ -213,6 +228,7 @@ function onMessage(e) {
 
                     if(moderator) {
                         chatMessages[i].querySelector(".moderatorView button[data-function=approve]").setAttribute("disabled", "disabled");
+                        chatMessages[i].querySelector(".moderatorView button[data-function=approve]").innerHTML = "freigegeben";
                     }
                 }
             }
@@ -242,8 +258,28 @@ function onMessage(e) {
 
                     if(moderator) {
                         chatMessages[i].querySelector(".moderatorView button[data-function=push]").setAttribute("disabled", "disabled");
+                        chatMessages[i].querySelector(".moderatorView button[data-function=push]").innerHTML = "pushed";
+                        chatMessages[i].querySelector(".moderatorView button[data-function=done]").removeAttribute("disabled");
                     }
                 }
+            }
+            break;
+
+        case "doneMsg":
+            chatMessages = document.getElementsByClassName("chatMessage");
+            for (let i = 0; i < chatMessages.length; i++) {
+                if(chatMessages[i].dataset.uuid == jsonMessage.uuid) {
+                    if(moderator) {
+                        chatMessages[i].querySelector(".moderatorView button[data-function=done]").setAttribute("disabled", "disabled");
+                        chatMessages[i].querySelector(".moderatorView button[data-function=done]").innerHTML = "done";
+                    }
+                    else {
+                        chatMessages[i].remove();
+                    }
+
+
+                }
+
             }
             break;
 
@@ -327,6 +363,7 @@ function chatMessageBuilder(username = '', timestamp = '13:37', message = '', se
 
         let approveButton = document.createElement("button");
         approveButton.innerText = "Freigeben";
+        approveButton.title = "Die Nachricht wird für alle Teilnehmer freigegeben."
         approveButton.className = "button";
         approveButton.dataset.uuid = uuid;
         approveButton.dataset.function = "approve";
@@ -343,6 +380,7 @@ function chatMessageBuilder(username = '', timestamp = '13:37', message = '', se
 
         let pushButton = document.createElement("button");
         pushButton.innerText = "Push";
+        pushButton.title = "Diese Nachricht an den Speaker senden."
         pushButton.className = "button";
         pushButton.dataset.uuid = uuid;
         pushButton.dataset.function = "push";
@@ -355,6 +393,7 @@ function chatMessageBuilder(username = '', timestamp = '13:37', message = '', se
 
         let deleteButton = document.createElement("button");
         deleteButton.innerText = "Löschen";
+        deleteButton.title = "Diese Nachricht als gelöscht markieren (entfernt sie jedoch nicht aus der Datenbank).";
         deleteButton.href = "";
         deleteButton.className = "button";
         deleteButton.dataset.uuid = uuid;
@@ -365,20 +404,22 @@ function chatMessageBuilder(username = '', timestamp = '13:37', message = '', se
             //console.log(this.dataset.uuid)
         });
         
-        let blockUserButton = document.createElement("button");
-        blockUserButton.innerText = "Blockieren";
-        blockUserButton.href = "";
-        blockUserButton.className = "button";
-        blockUserButton.dataset.uuid = uuid;
-        blockUserButton.dataset.function = "blockUser";
-        blockUserButton.addEventListener("click", function (e) {
+        let doneButton = document.createElement("button");
+        doneButton.innerText = "Done";
+        doneButton.title = "Nachricht wird beim Speaker wieder ausgeblendet.";
+        doneButton.href = "";
+        doneButton.disabled = true;
+        doneButton.className = "button";
+        doneButton.dataset.uuid = uuid;
+        doneButton.dataset.function = "done";
+        doneButton.addEventListener("click", function (e) {
             e.preventDefault();
-            conn.send(JSON.stringify({command: "blockUser", uuid: e.target.dataset.uuid}));
+            conn.send(JSON.stringify({command: "doneMsg", uuid: e.target.dataset.uuid}));
             //console.log(this.dataset.uuid)
         });
 
 
-        moderatorView.append(approveButton, pushButton, deleteButton, blockUserButton);
+        moderatorView.append(approveButton, pushButton, doneButton, deleteButton);
 
     }
 
